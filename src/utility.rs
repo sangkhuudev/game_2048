@@ -1,5 +1,9 @@
 use crate::colors::{BOARD, TILE, TILE_PLACEHODER};
-use crate::components::{Board, FontSpec, Points, Position, TileText, Game, TILE_SIZE};
+use crate::components::{
+    Board, FontSpec, Points,
+    Position, TileText, 
+    Game, TILE_SIZE, RunState
+};
 use bevy::prelude::*;
 use itertools::Itertools;
 use rand::prelude::*;
@@ -270,6 +274,7 @@ pub fn new_tile_handler(
 pub fn end_game(
     tiles: Query<(&Position, &Points)>,
     query_board: Query<&Board>,
+    mut run_state: ResMut<NextState<RunState>>,
 ) {
     let board = query_board.single();
     if tiles.iter().len() == 16 {
@@ -299,6 +304,7 @@ pub fn end_game(
         );
         if !has_move {
             dbg!("Game over");
+            run_state.set(RunState::GameOver);
         }
     }
 }

@@ -37,7 +37,8 @@ pub struct Points {
 pub struct Game {
     pub score: u32,
     pub score_best: u32,
-}#[derive(
+}
+#[derive(
     Component, Debug,
     PartialEq, Clone, 
     Copy, Hash, Eq
@@ -63,4 +64,14 @@ impl FromWorld for FontSpec {
                 .load("fonts/FiraSans-Bold.ttf"),
         }
     }
+}
+
+#[derive(
+    Default, Debug, PartialEq, 
+    Clone, Hash, Eq, States,
+)]
+pub enum RunState {
+    #[default]
+    Playing,
+    GameOver,
 }

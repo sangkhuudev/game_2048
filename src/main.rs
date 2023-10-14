@@ -4,7 +4,7 @@ use boxes::utility::{setup, spawn_board,
     board_shift, render_tiles, 
     new_tile_handler, NewTileEvent, end_game
 };
-use boxes::components::{Game, FontSpec};
+use boxes::components::{Game, FontSpec, RunState};
 use boxes::ui::GameUiPlugin;
 
 fn main() {
@@ -20,7 +20,9 @@ fn main() {
         .add_plugins(GameUiPlugin)
         .init_resource::<Game>()
         .init_resource::<FontSpec>()
+        // .init_resource::<State<RunState>>()
         .add_event::<NewTileEvent>()
+        .add_state::<RunState>()
         .add_systems(
             Startup,
             (setup, spawn_board, apply_deferred, spawn_tiles)
@@ -31,6 +33,8 @@ fn main() {
                 render_tile_points, board_shift, 
                 render_tiles,  new_tile_handler,
                 end_game
-            ))
+            )
+            .run_if(in_state(RunState::Playing))
+        )
         .run()
 }
