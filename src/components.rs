@@ -24,16 +24,24 @@ impl Board {
     }
 }
 
-#[derive(Default, Resource)]
-pub struct Game {
-    pub score: u32,
-}
-#[derive(Component, Debug,PartialEq, Clone, Copy)]
+#[derive(
+    Component, Debug,
+    PartialEq, Clone, 
+    Copy,
+)]
 pub struct Points {
     pub value: u32,
 }
 
-#[derive(Component, Debug, PartialEq, Clone, Copy)]
+#[derive(Default, Resource)]
+pub struct Game {
+    pub score: u32,
+    pub score_best: u32,
+}#[derive(
+    Component, Debug,
+    PartialEq, Clone, 
+    Copy, Hash, Eq
+)]
 pub struct Position {
     pub x: u8,
     pub y: u8,

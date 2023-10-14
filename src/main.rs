@@ -2,7 +2,8 @@ use bevy::prelude::*;
 use boxes::utility::{setup, spawn_board, 
     spawn_tiles,render_tile_points, 
     board_shift, render_tiles, 
-    new_tile_handler, NewTileEvent};
+    new_tile_handler, NewTileEvent, end_game
+};
 use boxes::components::{Game, FontSpec};
 use boxes::ui::GameUiPlugin;
 
@@ -25,6 +26,11 @@ fn main() {
             (setup, spawn_board, apply_deferred, spawn_tiles)
             .chain(),
         )
-        .add_systems(Update, (render_tile_points, board_shift, render_tiles,  new_tile_handler))
+        .add_systems(Update, 
+            (
+                render_tile_points, board_shift, 
+                render_tiles,  new_tile_handler,
+                end_game
+            ))
         .run()
 }

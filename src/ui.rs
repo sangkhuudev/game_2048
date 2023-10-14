@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::components::FontSpec;
+use crate::components::{FontSpec, Game};
 use crate::colors;
 use crate::styles::score_container_style;
 #[derive(Component)]
@@ -10,11 +10,21 @@ pub struct BestScoreDisplay;
 pub struct GameUiPlugin;
 impl Plugin for GameUiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_ui);
+        app.add_systems(Startup, setup_ui)
+            .add_systems(Update, scoreboard);
     }
 }
 
-pub fn setup_ui(mut commands: Commands, font_spec: Res<FontSpec>) {
+fn scoreboard(
+    game: Res<Game>,
+    mut query_score: Query<&mut Text, With<ScoreDisplay>>,
+) {
+    let mut text = query_score.single_mut();
+    text.sections[0].value = game.score.to_string();
+}
+
+
+fn setup_ui(mut commands: Commands, font_spec: Res<FontSpec>) {
     commands
         .spawn(NodeBundle {
             style: Style {

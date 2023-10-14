@@ -3,7 +3,10 @@ use crate::components::{Board, FontSpec, Points, Position, TileText, Game, TILE_
 use bevy::prelude::*;
 use itertools::Itertools;
 use rand::prelude::*;
-use std::cmp::Ordering;
+use std::{
+    cmp::Ordering, collections::HashMap, convert::TryFrom,
+    ops::Range,
+};
 
 pub fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
@@ -260,6 +263,42 @@ pub fn new_tile_handler(
             .choose(&mut rng);
         if let Some(pos) = possible_pos {
             spawn_tile(&mut commands, board, &font_spec, pos);
+        }
+    }
+}
+
+pub fn end_game(
+    tiles: Query<(&Position, &Points)>,
+    query_board: Query<&Board>,
+) {
+    let board = query_board.single();
+    if tiles.iter().len() == 16 {
+        let neighbor_points = [(-1,0), (1,0), (0,1), (0,-1)];
+        let map: HashMap<&Position, &Points> = tiles.iter().collect();
+        let board_range: Range<i8> = 0..(board.size as i8);
+
+        let has_move = tiles.iter().any(
+            |(Position {x,y}, value)| {
+                neighbor_points
+                    .iter()
+                    .filter_map(|(x2,y2)| {
+                        let new_x = *x as i8 - x2;
+                        let new_y = *y as i8 - y2;
+
+                        if !board_range.contains(&new_x) 
+                        || !board_range.contains(&new_y) {
+                            return None;
+                        }
+                        map.get(&Position {
+                            x: new_x.try_into().unwrap(),
+                            y: new_y.try_into().unwrap()
+                        })
+                    })
+                    .any(|&v| v == value)
+            },
+        );
+        if !has_move {
+            dbg!("Game over");
         }
     }
 }
