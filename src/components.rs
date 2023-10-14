@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub const TILE_SIZE: f32 = 40.0;
+pub const TILE_SIZE: f32 = 100.0;
 pub const TILE_SPACER: f32 = 10.0;
 
 #[derive(Component)]

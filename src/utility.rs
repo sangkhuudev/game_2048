@@ -90,7 +90,7 @@ pub fn spawn_tile(
                         "2",
                         TextStyle {
                             font: font_spec.family.clone(),
-                            font_size: 40.0,
+                            font_size: 30.0,
                             color: Color::BLACK,
                         },
                     )
