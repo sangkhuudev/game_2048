@@ -1,8 +1,11 @@
 use bevy::prelude::*;
+use bevy_easings::*;
+
 use boxes::utility::{setup, spawn_board, 
     spawn_tiles,render_tile_points, 
     board_shift, render_tiles, 
-    new_tile_handler, NewTileEvent, end_game
+    new_tile_handler, NewTileEvent, 
+    end_game, game_reset
 };
 use boxes::components::{Game, FontSpec, RunState};
 use boxes::ui::GameUiPlugin;
@@ -18,6 +21,7 @@ fn main() {
             ..default()
         }))
         .add_plugins(GameUiPlugin)
+        .add_plugins(EasingsPlugin)
         .init_resource::<Game>()
         .init_resource::<FontSpec>()
         // .init_resource::<State<RunState>>()
@@ -25,7 +29,7 @@ fn main() {
         .add_state::<RunState>()
         .add_systems(
             Startup,
-            (setup, spawn_board, apply_deferred, spawn_tiles)
+            (setup, spawn_board, apply_deferred)
             .chain(),
         )
         .add_systems(Update, 
@@ -35,6 +39,9 @@ fn main() {
                 end_game
             )
             .run_if(in_state(RunState::Playing))
+        )
+        .add_systems(OnEnter(RunState::Playing),
+            (game_reset, spawn_tiles)
         )
         .run()
 }

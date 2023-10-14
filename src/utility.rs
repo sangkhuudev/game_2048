@@ -5,6 +5,7 @@ use crate::components::{
     Game, TILE_SIZE, RunState
 };
 use bevy::prelude::*;
+use bevy_easings::*;
 use itertools::Itertools;
 use rand::prelude::*;
 use std::{
@@ -222,20 +223,36 @@ pub fn board_shift(
             }
         }
         tile_writer.send(NewTileEvent);
+        if game.best_score < game.score {
+            game.best_score = game.score;
+        }
     }
 }
 
 //----------------------------------------------------------------
 pub fn render_tiles(
-    mut tiles: Query<(&mut Transform, &Position, Changed<Position>)>,
+    mut commands: Commands,
+    mut tiles: Query<(Entity, &mut Transform, &Position), Changed<Position>>,
     query_board: Query<&Board>,
 ) {
     let board = query_board.single();
-    for (mut transform, pos, is_pos_changed) in tiles.iter_mut() {
-        if is_pos_changed {
-            transform.translation.x = board.cell_position_to_physical(pos.x);
-            transform.translation.y = board.cell_position_to_physical(pos.y);
-        }
+    for (entity, transform, pos) in tiles.iter_mut() {
+        let x = board.cell_position_to_physical(pos.x);
+        let y = board.cell_position_to_physical(pos.y);
+
+        commands.entity(entity).insert(transform.ease_to(
+            Transform::from_xyz(
+                x,
+                y,
+                transform.translation.z,
+            ),
+            EaseFunction::QuadraticInOut,
+            EasingType::Once {
+                duration: std::time::Duration::from_millis(
+                    100,
+                ),
+            },
+        ));
     }
 }
 
@@ -307,4 +324,15 @@ pub fn end_game(
             run_state.set(RunState::GameOver);
         }
     }
+}
+
+pub fn game_reset(
+    mut commands: Commands,
+    tiles: Query<Entity, With<Position>>,
+    mut game: ResMut<Game>,
+) {
+    for entity in tiles.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+    game.score = 0;
 }

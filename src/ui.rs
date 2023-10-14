@@ -21,9 +21,18 @@ impl Plugin for GameUiPlugin {
     }
 }
 
-fn scoreboard(game: Res<Game>, mut query_score: Query<&mut Text, With<ScoreDisplay>>) {
+fn scoreboard(
+    game: Res<Game>, 
+    mut query_score: Query<&mut Text, 
+    (With<ScoreDisplay>, Without<BestScoreDisplay>)>,
+    mut query_best_score: Query<&mut Text, 
+    (With<BestScoreDisplay>, Without<ScoreDisplay>)>
+) {
     let mut text = query_score.single_mut();
     text.sections[0].value = game.score.to_string();
+
+    let mut text = query_best_score.single_mut();
+    text.sections[0].value = game.best_score.to_string();
 }
 fn button_interaction_system(
     mut interaction_query: Query<

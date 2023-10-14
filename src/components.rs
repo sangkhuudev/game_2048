@@ -36,7 +36,7 @@ pub struct Points {
 #[derive(Default, Resource)]
 pub struct Game {
     pub score: u32,
-    pub score_best: u32,
+    pub best_score: u32,
 }
 #[derive(
     Component, Debug,
