@@ -4,7 +4,7 @@ use boxes::utility::{setup, spawn_board,
     board_shift, render_tiles, 
     new_tile_handler, NewTileEvent};
 use boxes::components::{Game, FontSpec};
-
+use boxes::ui::GameUiPlugin;
 
 fn main() {
     App::new()
@@ -16,6 +16,7 @@ fn main() {
             }),
             ..default()
         }))
+        .add_plugins(GameUiPlugin)
         .init_resource::<Game>()
         .init_resource::<FontSpec>()
         .add_event::<NewTileEvent>()
